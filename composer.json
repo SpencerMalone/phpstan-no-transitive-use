@@ -1,0 +1,25 @@
+{
+    "name": "spencermalone/phpstan-no-transitive-use",
+    "description": "PHPStan extension to disallow transitive dependency use",
+    "type": "phpstan-extension",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.4",
+        "phpstan/phpstan": "^2"
+    },
+    "autoload": {
+        "psr-4": {
+            "SpencerMalone\\NoTransitiveUse\\": "src/"
+        }
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.1"
+    }
+}
