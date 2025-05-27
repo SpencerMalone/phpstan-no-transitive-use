@@ -31,7 +31,7 @@ class NoTransitiveUseRuleTest extends TestCase
         $reflectionProvider = $this->createMock(ReflectionProvider::class);
         $rule = new NoTransitiveUseRule($reflectionProvider);
 
-        $filePath = 'vendor/transitive/package/src/ClassB.php';
+        $filePath = 'vendor/composer/../transitive/package/src/ClassB.php';
 
         // Make isFileInPrimaryDependencies public for testing or use Reflection to access it
         $refMethod = new \ReflectionMethod($rule, 'isFileInPrimaryDependencies');

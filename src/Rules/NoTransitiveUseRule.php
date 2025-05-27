@@ -6,7 +6,6 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 
 /**
@@ -18,7 +17,7 @@ class NoTransitiveUseRule implements Rule
     private static ?array $primaryDependencies = null;
 
     public function __construct(
-        private ReflectionProvider $reflectionProvider
+    private ReflectionProvider $reflectionProvider
     ) {
     }
 
@@ -38,13 +37,13 @@ class NoTransitiveUseRule implements Rule
                 if ($this->reflectionProvider->hasClass($class)) {
                     $classReflection = $this->reflectionProvider->getClass($class);
                     $filePath = $classReflection->getFileName();
-                if ($filePath !== null && str_starts_with($filePath, 'vendor/') && !$this->isFileInPrimaryDependencies($filePath)) {
+                    if ($filePath !== null && !$this->isFileInPrimaryDependencies($filePath)) {
                         $errors[] = RuleErrorBuilder::message(sprintf(
                             'Using class %s from a transitive dependency is not allowed.',
                             $class
                         ))
-                        ->identifier('noTransitiveDependency')
-                        ->build();
+                            ->identifier('noTransitiveDependency')
+                            ->build();
                     }
                 }
             }
@@ -73,13 +72,13 @@ class NoTransitiveUseRule implements Rule
     /**
      * Check if a file path belongs to a primary dependency
      *
-     * @param string $filePath
+     * @param  string $filePath
      * @return bool
      */
     private function isFileInPrimaryDependencies(string $filePath): bool
     {
         // Check if the file is in vendor directory
-        if (!str_starts_with($filePath, 'vendor/')) {
+        if (!str_contains($filePath, 'vendor/composer/..')) {
             return true;
         }
 
@@ -91,7 +90,7 @@ class NoTransitiveUseRule implements Rule
         // Extract vendor path from file path
         $vendorPath = $this->extractVendorPath($filePath);
         if ($vendorPath === null) {
-            return false;
+            return true;
         }
 
         // Check if this vendor path is in primary dependencies
@@ -126,7 +125,7 @@ class NoTransitiveUseRule implements Rule
         if (isset($composerData['require']) && is_array($composerData['require'])) {
             foreach ($composerData['require'] as $package => $version) {
                 if (strpos($package, '/') !== false) {
-                    $dependencies[] = 'vendor/'.$package;
+                    $dependencies[] = 'vendor/composer/..'.$package;
                 }
             }
         }
@@ -135,7 +134,7 @@ class NoTransitiveUseRule implements Rule
         if (isset($composerData['require-dev']) && is_array($composerData['require-dev'])) {
             foreach ($composerData['require-dev'] as $package => $version) {
                 if (strpos($package, '/') !== false) {
-                    $dependencies[] = 'vendor/'.$package;
+                    $dependencies[] = 'vendor/composer/..'.$package;
                 }
             }
         }
@@ -145,10 +144,10 @@ class NoTransitiveUseRule implements Rule
 
     private function extractVendorPath(string $filePath): ?string
     {
-        if (preg_match('#vendor/([^/]+/[^/]+)#', $filePath, $matches)) {
-            return 'vendor/'.$matches[1];
+        if (preg_match('#vendor/composer/../([^/]+/[^/]+)#', $filePath, $matches)) {
+            return 'vendor/composer/..'.$matches[1];
         }
 
         return null;
     }
-} 
+}
