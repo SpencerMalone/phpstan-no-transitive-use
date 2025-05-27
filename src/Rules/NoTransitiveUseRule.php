@@ -16,9 +16,12 @@ class NoTransitiveUseRule implements Rule
     /** @var string[]|null */
     private static ?array $primaryDependencies = null;
 
+    private ReflectionProvider $reflectionProvider;
+
     public function __construct(
-    private ReflectionProvider $reflectionProvider
+        ReflectionProvider $reflectionProvider
     ) {
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     public function getNodeType(): string

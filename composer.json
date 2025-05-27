@@ -5,7 +5,9 @@
     "license": "MIT",
     "require": {
         "php": ">=7.4",
-        "phpstan/phpstan": "^2"
+        "phpstan/phpstan": "^2",
+        "symfony/polyfill-php80": "^1.32",
+        "nikic/php-parser": "^4|^5"
     },
     "autoload": {
         "psr-4": {
@@ -20,6 +22,6 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^12.1"
+        "phpunit/phpunit": "^10|^11|^12"
     }
 }
