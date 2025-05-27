@@ -57,8 +57,9 @@ class NoTransitiveUseRule implements Rule
                 $filePath = $classReflection->getFileName();
                 if ($filePath !== null && !$this->isFileInPrimaryDependencies($filePath)) {
                     $errors[] = RuleErrorBuilder::message(sprintf(
-                        'Using class %s from a transitive dependency is not allowed.',
-                        $class
+                        'Using class %s (defined in %s) from a transitive dependency is not allowed.',
+                        $class,
+                        $filePath
                     ))
                     ->identifier('noTransitiveDependency')
                     ->build();
